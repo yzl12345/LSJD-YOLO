@@ -7,5 +7,5 @@
 4.精度微调：在ultralytics/engine/trainer.py文件下，约590行，取消该部分的注释。完成后在mytrain.py文件中训练。
 5.模型结果评价：把训练完成后的模型在val.py中进行测试。
 6.推理加速：用model.export(format='ncnn', half=True)将模型导出为ncnn，在边缘计算设备上完成有效测试。
-（论文实验中有效改进后的网络配置文件在MyModel文件夹下）
+（论文实验中有效改进后的网络配置文件在MyModel文件夹下。论文数据集在datasets和datasets2文件夹下）
 >>>>>>> 9d582b9 (first commit)
