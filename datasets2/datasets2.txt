@@ -1,0 +1,6 @@
+all: 	images(2070) instances(5657)
+train:	images(1552) instances(4300)
+val:	images(310) instances(838)
+test: 	images(208) instances(519)
+
+			

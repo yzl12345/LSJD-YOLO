@@ -1,0 +1,65 @@
+# Ultralytics YOLO ??, AGPL-3.0 license
+# YOLO11 object detection model with P3-P5 outputs. For Usage examples see https://docs.ultralytics.com/tasks/detect
+ 
+# Parameters
+nc: 2 # number of classes
+# 数据集的类别数，我们默认的数据COCO是80类别（YOLOv8提供的权重也是由此数据集训练出来的），有的读者喜欢修改nc此处其实不需要修改，
+# 模型会自动根据我们数据集的yaml文件获取此处的数量，同时我们8.1版本之前的ultralytics仓库打印两边的网络结构，唯一的区别就是nc的数量不一样（实际运行的是第二遍的网络结构）。
+ 
+scales: # model compound scaling constants, i.e. 'model=yolo11n.yaml' will call yolo11.yaml with scale 'n'
+  # 此处的含义大概就是如果我们在训练的指令时候使用model=yolov10.yaml 则对应的是v10n，如果使用model=yolov10s.yaml则对应的是v8s
+  # 当然了大家如果不想使用上面的方式指定模型，我们只需要将下面想要使用的模型移到最前端即可，或者将其余不想用的注释掉都可以。
+  # [depth, width, max_channels]
+  # depth 模型的深度  width 模型的宽度  max_channels模型最大的通道数
+  # 这三个参数共同决定模型的大小，其中depth主要是和下面配置文件部分的repeats进行一个计算来确定其中模块的串联数量
+  # width 主要是 和args的第一个参数通道数进行计算来算出模型不同层的通道数, 但是通道数不能超过max_channels.
+  # 大概介绍一下通道数是什么, 我们输入模型的tensor形状为[batch_size, 通道数, 图片宽, 图片高]
+  # 通道数就是tensor的第二个参数,如果我们忽略batch_size, 那么可以理解为通道数张二维图片堆叠在一起, batch_size为多少堆 每一堆有通道数张二维图片堆叠在一起.
+  # 每一个版本后面有每一个版本的层数 参数量等指标
+  # n: [0.50, 0.25, 1024] # summary: 319 layers, 2624080 parameters, 2624064 gradients, 6.6 GFLOPs
+  s: [0.50, 0.50, 1024] # summary: 319 layers, 9458752 parameters, 9458736 gradients, 21.7 GFLOPs
+  # m: [0.50, 1.00, 512] # summary: 409 layers, 20114688 parameters, 20114672 gradients, 68.5 GFLOPs
+  # l: [1.00, 1.00, 512] # summary: 631 layers, 25372160 parameters, 25372144 gradients, 87.6 GFLOPs
+  # x: [1.00, 1.50, 512] # summary: 631 layers, 56966176 parameters, 56966160 gradients, 196.0 GFLOPs
+ 
+# YOLO11n backbone
+backbone:
+  # 这里需要多介绍一下，from, repeats, module, args
+  # from 此处有三种可能的值分别是 -1、具体的数值、list存放数值。分别含义如下  (1)、-1的含义就是代表此层的输入就是上一层的输出，
+  #                                                                (2)、如果是具体的某个数字比如4那么则代表本层的输入来自于模型的第四层，
+  #                                                                (3)、有的层是list存放两个值也可能是多个值，则代表对应两个值的输出为本层的输入
+  # repeats 这个参数是为了C2f设置的其它的模块都用不到，代表着C2f当中Bottleneck重复的次数，比如当我们的模型用的是l的时候，那么repeats=2那么则代表C3k2当中的Bottleneck串行2个。
+  # module 此处则代表模型的名称
+  # args 此处代表输入到对应模块的参数，此处和parse_model函数中的定义方法有关，对于C3k2来说传入的参数->第一个参数是上一个模型的输出通道数，第二个参数就是args的第一个参数，然后以此类推。
+  # [from, repeats, module, args]
+  - [-1, 1, Conv, [64, 3, 2]] # 0-P1/2
+  - [-1, 1, Conv, [128, 3, 2]] # 1-P2/4
+  - [-1, 2, C3k2, [256, False, 0.25]]
+  - [-1, 1, Conv, [256, 3, 2]] # 3-P3/8
+  - [-1, 2, C3k2, [512, False, 0.25]]
+  - [-1, 1, Conv, [512, 3, 2]] # 5-P4/16
+  - [-1, 2, C3k2, [512, True]]
+  - [-1, 1, Conv, [1024, 3, 2]] # 7-P5/32
+  - [-1, 2, C3k2, [1024, True]]
+  - [-1, 1, SPPF, [1024, 5]] # 9
+  - [-1, 2, C2PSA, [1024]] # 10
+ 
+# YOLO11n head
+head:
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 6], 1, Concat, [1]] # cat backbone P4
+  - [-1, 2, C3k2, [512, False]] # 13
+ 
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 4], 1, Concat, [1]] # cat backbone P3
+  - [-1, 2, C3k2, [256, False]] # 16 (P3/8-small)
+ 
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [[-1, 13], 1, Concat, [1]] # cat head P4
+  - [-1, 2, C3k2, [512, False]] # 19 (P4/16-medium)
+ 
+  - [-1, 1, Conv, [512, 3, 2]]
+  - [[-1, 10], 1, Concat, [1]] # cat head P5
+  - [-1, 2, C3k2, [1024, True]] # 22 (P5/32-large)
+ 
+  - [[16, 19, 22], 1, Detect, [nc]] # Detect(P3, P4, P5)
