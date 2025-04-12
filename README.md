@@ -4,9 +4,10 @@
 Install: git clone https://github.com/yzl12345/LSJD-YOLO
         cd LSJD-YOLO
 
-对网络的改进，主要集中在颈部和检测头：
-1.在颈部增加了1*1卷积层压缩通道数，实现网络轻量化。
-2.在原有基础上增加一个检测头，解决小目标难以检测的问题。
+The improvements to the network primarily focus on the neck and detection heads:
+
+1.A 1×1 convolutional layer has been added to the neck to compress the number of channels, thereby achieving network lightweighting.
+2.An additional detection head has been incorporated on top of the existing architecture to address the challenge of detecting small objects.
 
 head:
   - [-1, 1, Conv, [256, 1, 1]]                          # 11
@@ -41,15 +42,16 @@ head:
 
   - [[25, 28, 31, 34], 1, Detect, [nc]]                 # Detect(P2, P3, P4, P5)
 
-如下是训练步骤：
-1.初始训练：在mytrain.py文件中完成。
-2.约束训练：在ultralytics/engine/trainer.py文件下，约396行，取消该部分的注释。完成后在mytrain.py文件中训练。
-3.剪枝：在LL_pruning.py文件下可以调整剪枝率，对约束训练后的模型进行剪枝。
-4.精度微调：在ultralytics/engine/trainer.py文件下，约590行，取消该部分的注释。完成后在mytrain.py文件中训练。
-5.模型结果评价：把训练完成后的模型在val.py中进行测试。
-6.推理加速：用model.export(format='ncnn', half=True)将模型导出为ncnn，在边缘计算设备上完成有效测试。
+Below are the training steps:
 
-在两个数据集上的消融实验和对比实验结果分别如下：
+1.Initial Training: This step is carried out in the mytrain.py file.
+2.Constrained Training: In the ultralytics/engine/trainer.py file, locate approximately line 396 and uncomment the relevant section. After making this modification, proceed with training in the mytrain.py file.
+3.Pruning: The pruning rate can be adjusted in the LL_pruning.py file. Apply pruning to the model that has undergone constrained training.
+4.Fine-Tuning for Accuracy: In the ultralytics/engine/trainer.py file, locate approximately line 590 and uncomment the relevant section. Afterward, continue training in the mytrain.py file.
+5.Model Evaluation: Test the trained model using the val.py script to evaluate its performance.
+6.Inference Acceleration: Export the model to the NCNN format using model.export(format='ncnn', half=True). This allows for efficient testing on edge computing devices.
+
+The results of the ablation experiments and comparative experiments on the two datasets are presented as follows:
 
 ![0K4D120P$`FPL(SEAAC@2VC](https://github.com/user-attachments/assets/d06a7213-b8f6-409e-afe3-34a48abecfad)
 
@@ -58,7 +60,8 @@ head:
 
 
 
-（论文实验中有效改进后的网络配置文件在MyModel文件夹下）
-数据集：
-论文数据集在datasets和datasets2文件夹下，一共有两套，都是水母单类别检测的数据集，含有大量水母小目标。
+(The configuration file of the effectively improved network used in the paper's experiments is located in the "MyModel" folder.)
+
+Datasets:
+The datasets used in the paper are stored in the "datasets" and "datasets2" folders. There are two sets of datasets in total, both of which are dedicated to single-category detection of jellyfish and contain a large number of small jellyfish targets.
 >>>>>>> 9d582b9 (first commit)
