@@ -1,5 +1,6 @@
 
 # LSJD-YOLO
+These are the source codes for our paper titled "Optimized LSJD-YOLO: Lightweight Small Jellyfish Detection Using Enhanced YOLOv11 for Underwater Edge Computing" published at the Visual Computer journal in 2022.
 =======
 Install: git clone https://github.com/yzl12345/LSJD-YOLO
         cd LSJD-YOLO
