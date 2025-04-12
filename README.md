@@ -51,7 +51,7 @@ head:
 
 在两个数据集上的消融实验和对比实验结果分别如下：
 
-
+![0K4D120P$`FPL(SEAAC@2VC](https://github.com/user-attachments/assets/d06a7213-b8f6-409e-afe3-34a48abecfad)
 
 
 
