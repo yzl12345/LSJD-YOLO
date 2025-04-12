@@ -1,4 +1,4 @@
-![0K4D120P$`FPL(SEAAC@2VC](https://github.com/user-attachments/assets/d06a7213-b8f6-409e-afe3-34a48abecfad)<<<<<<< HEAD
+
 # LSJD-YOLO
 =======
 Install: git clone https://github.com/yzl12345/LSJD-YOLO
