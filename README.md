@@ -1,7 +1,9 @@
 <<<<<<< HEAD
 # LSJD-YOLO
 =======
-代码
+Install: git clone https://github.com/yzl12345/LSJD-YOLO
+        cd LSJD-YOLO
+
 1.初始训练：在mytrain.py文件中完成。
 2.约束训练：在ultralytics/engine/trainer.py文件下，约396行，取消该部分的注释。完成后在mytrain.py文件中训练。
 3.剪枝：在LL_pruning.py文件下可以调整剪枝率，对约束训练后的模型进行剪枝。
