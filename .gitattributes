@@ -4,3 +4,5 @@ datasets2/** filter=lfs diff=lfs merge=lfs -text lockable
 关键！递归跟踪文件夹内所有文件 filter=lfs diff=lfs merge=lfs -text
 "datasets/** filter=lfs diff=lfs merge=lfs -text" 
 "datasets2/** filter=lfs diff=lfs merge=lfs -text" 
+"datasets/** filter=lfs diff=lfs merge=lfs -text" 
+"datasets2/** filter=lfs diff=lfs merge=lfs -text" 
